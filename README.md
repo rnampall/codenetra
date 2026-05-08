@@ -117,8 +117,6 @@ pip install --upgrade pip
 pip install -e .
 ```
 
-(Once published to PyPI: `pip install codenetra`.)
-
 ## Configure
 
 ```bash
