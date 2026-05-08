@@ -1,0 +1,84 @@
+{% extends "_layout.html" %}
+{% block title %}Codenetra — scan{% endblock %}
+{% block content %}
+
+<h1>GitLab hygiene, reported in seconds.</h1>
+<p class="meta">
+  Codenetra (नेत्र, "the eye") scans an entire group — or a single project —
+  against {{ builtin_rule_count }} repo-hygiene rules. Reads metadata only;
+  your source code is never read or stored.
+</p>
+
+<form method="POST" action="/scan" id="scan-form" autocomplete="off" enctype="multipart/form-data">
+  <label>Scan target</label>
+  <div class="radio-row">
+    <label><input type="radio" name="scope" value="group" checked> Group (and subgroups)</label>
+    <label><input type="radio" name="scope" value="project"> Single project</label>
+  </div>
+
+  <label for="path">Path</label>
+  <input
+    type="text" id="path" name="path"
+    placeholder="acme-corp   |   acme-corp/platform/api-gateway"
+    required autofocus>
+
+  <label for="workers">Concurrent workers</label>
+  <input type="number" id="workers" name="workers" value="8" min="1" max="32">
+
+  <div class="checkbox-row">
+    <label><input type="checkbox" name="no_subgroups"> Skip subgroups (group scans only)</label>
+  </div>
+
+  <details class="rules-details" style="margin-top:1.25em;">
+    <summary>Custom rules <span class="meta">(optional — defaults to {{ builtin_rule_count }} built-in rules)</span></summary>
+    <div style="margin-top:0.75em;">
+      <label for="rules_file">Upload rules.yaml or rules.md</label>
+      <input type="file" id="rules_file" name="rules_file" accept=".yaml,.yml,.md">
+
+      <label for="rules_text" style="margin-top:1em;">…or paste YAML directly</label>
+      <textarea id="rules_text" name="rules_text" rows="6" style="width:100%;padding:0.55em 0.7em;border:1px solid #CBD5E1;border-radius:4px;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:0.85em;" placeholder="version: 1&#10;rules:&#10;  - key: has_security&#10;    enabled: false   # disable a built-in&#10;  - key: my_custom_rule&#10;    title: My custom rule&#10;    check: file_exists&#10;    paths: [CUSTOM.md]&#10;    fix_hint: Add a CUSTOM.md."></textarea>
+      <p class="meta" style="margin-top:0.5em;">
+        Custom rules are merged on top of the built-ins by <code>key</code> —
+        same key replaces, new key appends, <code>enabled: false</code> drops a built-in.
+      </p>
+    </div>
+  </details>
+
+  <button type="submit">Scan</button>
+</form>
+
+<p class="meta" style="margin-top:1.25em">
+  GitLab URL: <code>{{ gitlab_url }}</code> &middot;
+  Token:
+  {% if token_present %}
+    <span class="ok-pill">configured</span>
+  {% else %}
+    <span class="miss-pill">missing</span> — set <code>GITLAB_TOKEN</code> in your shell or in <code>.env</code>.
+  {% endif %}
+</p>
+
+{% if recent_reports %}
+<h2>Recent scans</h2>
+<ul>
+{% for r in recent_reports %}
+  <li>
+    <a href="/reports/{{ r.slug }}">{{ r.slug }}</a>
+    <span class="meta"> — {{ r.mtime }} · {{ r.size_kb }} KB</span>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <div><strong>Starting scan…</strong></div>
+  <div class="meta" style="color: rgba(255,255,255,0.85);">Resolving target and queueing the job.</div>
+</div>
+
+<script>
+  document.getElementById('scan-form').addEventListener('submit', function () {
+    document.getElementById('overlay').classList.add('show');
+  });
+</script>
+
+{% endblock %}

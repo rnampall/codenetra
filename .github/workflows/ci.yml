@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-build:
+    name: Build & syntax-check on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Syntax check (every module parses on minimum supported Python)
+        run: |
+          python -c "
+          import ast, pathlib
+          for p in pathlib.Path('codenetra').rglob('*.py'):
+              ast.parse(p.read_text(), filename=str(p), feature_version=(3, 9))
+          print('OK — all modules parse under 3.9')
+          "
+
+      - name: Smoke import
+        run: |
+          python -c "from codenetra.rules_loader import load_builtin_rules; r = load_builtin_rules(); print(f'{len(r.rules)} rules loaded')"
+
+      - name: CLI --help works
+        run: |
+          codenetra --help
+          codenetra scan --help
+          codenetra serve --help
+
+      - name: Run any pytest tests if present
+        run: |
+          if [ -d tests ] && find tests -name "test_*.py" -o -name "*_test.py" | grep -q .; then
+            pytest -q
+          else
+            echo "no tests/ directory yet — skipping"
+          fi

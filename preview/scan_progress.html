@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scanning acme-corp/platform — Codenetra</title>
+<style>
+  /* ---------- Codenetra brand palette ----------
+     Override these variables to match your exact brand standards.
+     The rest of the stylesheet refers to them only — change here, see everywhere. */
+  :root {
+    --codenetra-navy:        #0A1F44;
+    --codenetra-navy-soft:   #1E365C;
+    --codenetra-green:       #1FE1AF;
+    --codenetra-green-dark:  #14B689;
+    --codenetra-blue:        #2E55E0;
+
+    --brand-primary:       var(--codenetra-navy);
+    --brand-accent:        var(--codenetra-green);
+    --brand-accent-hover:  var(--codenetra-green-dark);
+    --brand-link:          var(--codenetra-blue);
+
+    --text-body:           #1E293B;
+    --text-muted:          #64748B;
+    --border-soft:         #E2E8F0;
+    --bg-soft:             #F8FAFC;
+    --bg-tile:             #FFFFFF;
+
+    --rag-green-bg:   #D1FAE5;
+    --rag-green-fg:   #065F46;
+    --rag-yellow-bg:  #FEF3C7;
+    --rag-yellow-fg:  #92400E;
+    --rag-red-bg:     #FEE2E2;
+    --rag-red-fg:     #991B1B;
+
+    --gradient-brand: linear-gradient(135deg, var(--codenetra-navy) 0%, var(--codenetra-blue) 55%, var(--codenetra-green) 100%);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    max-width: 960px;
+    margin: 2em auto;
+    padding: 0 1.25em 4em;
+    color: var(--text-body);
+    line-height: 1.55;
+    background: #fff;
+  }
+
+  header {
+    position: relative;
+    border-bottom: none;
+    padding: 1em 1.25em;
+    margin-bottom: 1.75em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--gradient-brand);
+    border-radius: 8px;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(10, 31, 68, 0.12);
+  }
+  header a.logo {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    font-size: 1.4em;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+  }
+  header a.logo .logo-tag {
+    color: var(--codenetra-green);
+    font-weight: 500;
+    letter-spacing: normal;
+    font-size: 0.75em;
+    opacity: 0.85;
+  }
+  header .nav { font-size: 0.85em; color: rgba(255, 255, 255, 0.85); }
+  header .nav a { color: inherit; margin-left: 1em; text-decoration: none; }
+  header .nav a:hover { color: var(--codenetra-green); }
+
+  h1, h2, h3 { color: var(--brand-primary); }
+  h1 { margin-top: 0.5em; font-size: 1.7em; }
+  h2 {
+    margin-top: 1.75em; font-size: 1.25em;
+    border-bottom: 2px solid var(--brand-accent);
+    padding-bottom: 0.3em;
+    display: inline-block;
+  }
+  h3 { margin-top: 1.5em; font-size: 1.05em; }
+
+  form {
+    background: var(--bg-soft);
+    padding: 1.5em;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+  }
+  label { display: block; margin: 0.85em 0 0.25em; font-weight: 600; color: var(--brand-primary); }
+  input[type=text], input[type=number] {
+    width: 100%;
+    padding: 0.55em 0.7em;
+    border: 1px solid #CBD5E1;
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: inherit;
+    color: var(--text-body);
+  }
+  input[type=text]:focus, input[type=number]:focus {
+    outline: 2px solid var(--brand-accent);
+    outline-offset: -1px;
+    border-color: var(--brand-accent);
+  }
+  .radio-row { display: flex; gap: 1.5em; margin-top: 0.4em; }
+  .radio-row label, .checkbox-row label {
+    font-weight: normal; display: flex; align-items: center; gap: 0.4em; margin: 0;
+    color: var(--text-body);
+  }
+  .checkbox-row { margin-top: 0.85em; }
+
+  button[type=submit] {
+    background: var(--brand-accent);
+    color: var(--codenetra-navy);
+    border: none;
+    padding: 0.65em 1.6em;
+    border-radius: 999px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 6px rgba(31, 225, 175, 0.25);
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  button[type=submit]:hover {
+    background: var(--brand-accent-hover);
+    color: #fff;
+  }
+  button[type=submit]:active { transform: translateY(1px); }
+
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.95em; }
+  th, td { padding: 0.5em 0.75em; border-bottom: 1px solid var(--border-soft); text-align: left; }
+  th { background: var(--bg-soft); font-weight: 600; color: var(--brand-primary); }
+  td:nth-child(n+2), th:nth-child(n+2) { text-align: right; }
+
+  /* ---------- executive scorecard ---------- */
+  .scorecard table {
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
+    box-shadow: 0 1px 4px rgba(10, 31, 68, 0.05);
+  }
+  .scorecard th {
+    text-transform: uppercase;
+    font-size: 0.72em;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    text-align: center !important;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .scorecard td {
+    text-align: center !important;
+    font-size: 1.6em;
+    font-weight: 600;
+    color: var(--brand-primary);
+    padding: 0.75em 0.5em 1em;
+    background: var(--bg-tile);
+    border-bottom: none;
+  }
+  .scorecard td strong { color: var(--brand-accent-hover); font-weight: 700; }
+  .scorecard td .rag {
+    font-size: 0.7em;
+    padding: 0.25em 0.7em;
+    border-radius: 999px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .rag-green  { background: var(--rag-green-bg);  color: var(--rag-green-fg); }
+  .rag-yellow { background: var(--rag-yellow-bg); color: var(--rag-yellow-fg); }
+  .rag-red    { background: var(--rag-red-bg);    color: var(--rag-red-fg); }
+
+  blockquote {
+    border-left: 4px solid var(--brand-accent);
+    background: #ECFDF5;
+    padding: 0.75em 1em;
+    margin: 1.25em 0;
+    color: var(--brand-primary);
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p { margin: 0; }
+
+  details { margin: 0.5em 0; }
+  summary { cursor: pointer; padding: 0.4em 0; color: var(--brand-primary); font-weight: 500; }
+  summary:hover { color: var(--brand-accent-hover); }
+
+  code {
+    background: var(--bg-soft);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    color: var(--codenetra-navy-soft);
+  }
+  pre {
+    background: var(--codenetra-navy);
+    color: #E2E8F0;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  hr { border: none; border-top: 1px solid var(--border-soft); margin: 2em 0; }
+  a { color: var(--brand-link); }
+  a:hover { color: var(--codenetra-navy); }
+
+  .meta { color: var(--text-muted); font-size: 0.9em; }
+  .meta code { background: var(--rag-yellow-bg); color: var(--rag-yellow-fg); }
+
+  .button-row { margin: 1em 0 1.5em; display: flex; gap: 0.5em; flex-wrap: wrap; }
+  .button-row a {
+    background: var(--bg-soft); color: var(--brand-primary);
+    padding: 0.5em 1em; text-decoration: none;
+    border-radius: 999px; border: 1px solid var(--border-soft);
+    font-size: 0.9em; font-weight: 500;
+  }
+  .button-row a:hover {
+    background: var(--brand-accent); color: var(--codenetra-navy);
+    border-color: var(--brand-accent);
+  }
+
+  .err {
+    background: #FEF2F2; border: 1px solid #FECACA;
+    color: #991B1B; padding: 1em 1.25em; border-radius: 6px;
+  }
+  .ok-pill   { color: var(--brand-accent-hover); font-weight: 600; }
+  .miss-pill { color: #DC2626; font-weight: 600; }
+
+  /* ---------- async scan progress card ---------- */
+  .scan-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 1.5em 1.75em;
+    margin-top: 1.25em;
+  }
+  .scan-card.failed {
+    border-color: #FECACA;
+    background: #FEF2F2;
+  }
+  .scan-headline {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 0.75em;
+  }
+  .scan-pct {
+    font-size: 2.4em; font-weight: 700;
+    color: var(--brand-primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .scan-counts {
+    color: var(--text-muted); font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-track {
+    width: 100%;
+    height: 14px;
+    background: #E2E8F0;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(10, 31, 68, 0.08);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--codenetra-blue), var(--codenetra-green));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  /* Indeterminate state — used while we're still enumerating repos and
+     don't yet know the total. The bar slides side-to-side to signal
+     "working but progress is unmeasured". */
+  .progress-fill.indeterminate {
+    animation: indeterminate-slide 1.6s ease-in-out infinite;
+    background-size: 200% 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--codenetra-blue) 30%,
+      var(--codenetra-green) 70%,
+      transparent 100%
+    );
+  }
+  @keyframes indeterminate-slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+  .scan-meta {
+    margin-top: 0.85em;
+    display: flex; flex-wrap: wrap; gap: 1.25em;
+    color: var(--text-muted); font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+  }
+  .scan-meta span { display: inline-flex; align-items: center; gap: 0.35em; }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 31, 68, 0.55);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.75em;
+    color: #fff;
+  }
+  .overlay.show { display: flex; }
+  .spinner {
+    width: 44px; height: 44px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--brand-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer { color: var(--text-muted); font-size: 0.85em; margin-top: 4em; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo">CODENETRA <span class="logo-tag">नेत्र</span></a>
+  <nav class="nav">
+    <a href="/">Scan</a>
+  </nav>
+</header>
+
+
+<h1 id="title">Scanning <code id="target">acme-corp/platform</code></h1>
+
+<p class="meta">
+  <span id="scope-line">Group scan</span> ·
+  rules: <code>built-in</code> ·
+  started 17:30:00 UTC
+</p>
+
+<div class="scan-card" id="scan-card">
+  <div class="scan-headline">
+    <div class="scan-pct" id="pct">…</div>
+    <div class="scan-counts" id="counts">enumerating</div>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill indeterminate" id="bar" style="width: 25%"></div>
+  </div>
+
+  <div class="scan-meta">
+    <span id="elapsed">elapsed: 0s</span>
+    <span id="eta">ETA: …</span>
+    <span id="last" style="display:none;">last: —</span>
+    <span id="phase">phase: discovering repositories</span>
+  </div>
+</div>
+
+<div id="error-card" class="err" style="display:none; margin-top:1.5em;">
+  <strong>Scan failed.</strong> <span id="error-msg"></span>
+  <p style="margin-top:0.75em;"><a href="/">← Back to scan form</a></p>
+</div>
+
+<script>
+  const jobId = "abcd1234ef";
+  const bar     = document.getElementById("bar");
+  const pct     = document.getElementById("pct");
+  const counts  = document.getElementById("counts");
+  const elapsed = document.getElementById("elapsed");
+  const eta     = document.getElementById("eta");
+  const last    = document.getElementById("last");
+  const errorCard = document.getElementById("error-card");
+  const errorMsg  = document.getElementById("error-msg");
+
+  let pollHandle = null;
+  let lastTickAt = Date.now();
+  let lastCompleted = 0;
+
+  function fmtSeconds(s) {
+    if (s == null || !isFinite(s)) return "—";
+    s = Math.round(s);
+    if (s < 60) return s + "s";
+    const m = Math.floor(s / 60), r = s % 60;
+    return m + "m" + (r > 0 ? r + "s" : "");
+  }
+
+  const target  = document.getElementById("target");
+  const phase   = document.getElementById("phase");
+  const card    = document.getElementById("scan-card");
+
+  async function poll() {
+    let data;
+    try {
+      const res = await fetch(`/scan/${jobId}/status`, {cache: "no-store"});
+      if (!res.ok) throw new Error("status " + res.status);
+      data = await res.json();
+    } catch (e) {
+      // Network blip — try again on the next tick.
+      console.warn("poll failed", e);
+      return;
+    }
+
+    if (data.target) target.textContent = data.target;
+
+    const total     = data.total || 0;
+    const completed = data.completed || 0;
+    elapsed.textContent = "elapsed: " + fmtSeconds(data.elapsed_seconds);
+
+    if (data.state === "enumerating") {
+      // We don't know total yet. Show indeterminate bar + live discovery counter.
+      bar.classList.add("indeterminate");
+      bar.style.width = "30%";
+      pct.textContent = "—";
+      counts.textContent = total > 0
+        ? `${total} repos found so far`
+        : `discovering…`;
+      phase.textContent = "phase: discovering repositories";
+      eta.textContent = "ETA: …";
+      last.style.display = "none";
+    } else if (data.state === "running") {
+      bar.classList.remove("indeterminate");
+      const ratio   = total > 0 ? completed / total : 0;
+      const percent = Math.round(ratio * 100);
+      bar.style.width = percent + "%";
+      pct.textContent = percent + "%";
+      counts.textContent = `${completed} / ${total} repos`;
+      last.style.display = "";
+      last.textContent  = "last: " + (data.last_finished || "—");
+      phase.textContent = "phase: scanning";
+      // Naive ETA: project remaining from the average rate so far.
+      if (completed > 0 && data.elapsed_seconds && total > completed) {
+        const rate = completed / data.elapsed_seconds;
+        eta.textContent = "ETA: " + fmtSeconds((total - completed) / rate);
+      } else if (total > 0 && completed === total) {
+        eta.textContent = "ETA: done";
+      }
+    }
+
+    if (data.state === "completed") {
+      clearInterval(pollHandle);
+      window.location.href = `/reports/${data.slug}`;
+    } else if (data.state === "failed") {
+      clearInterval(pollHandle);
+      errorCard.style.display = "block";
+      errorMsg.textContent = data.error || "Unknown error.";
+      card.classList.add("failed");
+    }
+  }
+
+  poll();                           // run once immediately so the UI populates
+  pollHandle = setInterval(poll, 500);
+</script>
+
+
+<footer>Codenetra v0.1.0 · the eye on every repo · reads metadata only, never source.</footer>
+</body>
+</html>

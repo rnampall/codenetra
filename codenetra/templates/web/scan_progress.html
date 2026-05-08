@@ -1,0 +1,126 @@
+{% extends "_layout.html" %}
+{% block title %}Scanning {{ job.target_label }} — Codenetra{% endblock %}
+{% block content %}
+
+<h1 id="title">Scanning <code id="target">{{ job.target_label }}</code></h1>
+
+<p class="meta">
+  <span id="scope-line">{{ job.scope_label }} scan</span> ·
+  rules: <code>{{ job.rules_source }}</code> ·
+  started {{ job.started_at.strftime('%H:%M:%S UTC') if job.started_at else '—' }}
+</p>
+
+<div class="scan-card" id="scan-card">
+  <div class="scan-headline">
+    <div class="scan-pct" id="pct">…</div>
+    <div class="scan-counts" id="counts">enumerating</div>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill indeterminate" id="bar" style="width: 25%"></div>
+  </div>
+
+  <div class="scan-meta">
+    <span id="elapsed">elapsed: 0s</span>
+    <span id="eta">ETA: …</span>
+    <span id="last" style="display:none;">last: —</span>
+    <span id="phase">phase: discovering repositories</span>
+  </div>
+</div>
+
+<div id="error-card" class="err" style="display:none; margin-top:1.5em;">
+  <strong>Scan failed.</strong> <span id="error-msg"></span>
+  <p style="margin-top:0.75em;"><a href="/">← Back to scan form</a></p>
+</div>
+
+<script>
+  const jobId = "{{ job.job_id }}";
+  const bar     = document.getElementById("bar");
+  const pct     = document.getElementById("pct");
+  const counts  = document.getElementById("counts");
+  const elapsed = document.getElementById("elapsed");
+  const eta     = document.getElementById("eta");
+  const last    = document.getElementById("last");
+  const errorCard = document.getElementById("error-card");
+  const errorMsg  = document.getElementById("error-msg");
+
+  let pollHandle = null;
+  let lastTickAt = Date.now();
+  let lastCompleted = 0;
+
+  function fmtSeconds(s) {
+    if (s == null || !isFinite(s)) return "—";
+    s = Math.round(s);
+    if (s < 60) return s + "s";
+    const m = Math.floor(s / 60), r = s % 60;
+    return m + "m" + (r > 0 ? r + "s" : "");
+  }
+
+  const target  = document.getElementById("target");
+  const phase   = document.getElementById("phase");
+  const card    = document.getElementById("scan-card");
+
+  async function poll() {
+    let data;
+    try {
+      const res = await fetch(`/scan/${jobId}/status`, {cache: "no-store"});
+      if (!res.ok) throw new Error("status " + res.status);
+      data = await res.json();
+    } catch (e) {
+      // Network blip — try again on the next tick.
+      console.warn("poll failed", e);
+      return;
+    }
+
+    if (data.target) target.textContent = data.target;
+
+    const total     = data.total || 0;
+    const completed = data.completed || 0;
+    elapsed.textContent = "elapsed: " + fmtSeconds(data.elapsed_seconds);
+
+    if (data.state === "enumerating") {
+      // We don't know total yet. Show indeterminate bar + live discovery counter.
+      bar.classList.add("indeterminate");
+      bar.style.width = "30%";
+      pct.textContent = "—";
+      counts.textContent = total > 0
+        ? `${total} repos found so far`
+        : `discovering…`;
+      phase.textContent = "phase: discovering repositories";
+      eta.textContent = "ETA: …";
+      last.style.display = "none";
+    } else if (data.state === "running") {
+      bar.classList.remove("indeterminate");
+      const ratio   = total > 0 ? completed / total : 0;
+      const percent = Math.round(ratio * 100);
+      bar.style.width = percent + "%";
+      pct.textContent = percent + "%";
+      counts.textContent = `${completed} / ${total} repos`;
+      last.style.display = "";
+      last.textContent  = "last: " + (data.last_finished || "—");
+      phase.textContent = "phase: scanning";
+      // Naive ETA: project remaining from the average rate so far.
+      if (completed > 0 && data.elapsed_seconds && total > completed) {
+        const rate = completed / data.elapsed_seconds;
+        eta.textContent = "ETA: " + fmtSeconds((total - completed) / rate);
+      } else if (total > 0 && completed === total) {
+        eta.textContent = "ETA: done";
+      }
+    }
+
+    if (data.state === "completed") {
+      clearInterval(pollHandle);
+      window.location.href = `/reports/${data.slug}`;
+    } else if (data.state === "failed") {
+      clearInterval(pollHandle);
+      errorCard.style.display = "block";
+      errorMsg.textContent = data.error || "Unknown error.";
+      card.classList.add("failed");
+    }
+  }
+
+  poll();                           // run once immediately so the UI populates
+  pollHandle = setInterval(poll, 500);
+</script>
+
+{% endblock %}

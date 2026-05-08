@@ -1,0 +1,14 @@
+{% extends "_layout.html" %}
+{% block title %}{{ slug }} — Codenetra{% endblock %}
+{% block content %}
+
+<div class="button-row">
+  <a href="/">← Run another scan</a>
+  <a href="/reports/{{ slug }}.md" download>Download .md</a>
+</div>
+
+<div class="report-body">
+  {{ html|safe }}
+</div>
+
+{% endblock %}

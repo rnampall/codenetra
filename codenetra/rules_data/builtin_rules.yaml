@@ -1,0 +1,438 @@
+# Codenetra — built-in rule set (38 rules across 5 tiers)
+#
+# This file is the source of truth for the default scan. Override or extend
+# it by passing `--rules my-rules.yaml` to the CLI, or by uploading a custom
+# rules file in the web UI.
+#
+# Rule schema:
+#   key:        stable identifier (snake_case)
+#   title:      display name shown in reports
+#   tier:       which tier the rule belongs to (see config.tiers below)
+#   tags:       optional list — used for the security signal etc.
+#   check:      one of the primitives listed in rules.py
+#   fix_hint:   one-line instruction shown in the rule reference table
+#   ...other keys are passed as parameters to the check primitive
+
+version: 1
+
+# ---------- shared configuration ----------
+config:
+  readme_min_bytes: 500
+  gitignore_min_bytes: 50
+  activity_window_days: 90
+  repo_size_max_bytes: 524288000        # 500 MB
+  approvals_required_min: 1
+  # Tier order — rules render grouped by this. Any tier name a rule uses that
+  # isn't listed here gets appended in first-seen order, so custom rule files
+  # can introduce new tiers cleanly.
+  tiers:
+    - Baseline
+    - Security
+    - Universal best practice
+    - High-leverage
+    - Modern / AI-era
+  # Subdirectories the scanner pre-fetches so directory_has_files / file_exists
+  # checks against non-root paths work without one-off file lookups.
+  scanner:
+    pre_fetch_subdirs:
+      - .gitlab
+      - docs
+      - .devcontainer
+      - architecture
+      - .github
+    extra_root_paths:
+      - .pre-commit-config.yaml
+      - .pre-commit-config.yml
+      - .editorconfig
+      - .gitignore
+
+# ---------- rules ----------
+rules:
+
+  # ===== Baseline (the original 11) =====
+
+  - key: has_security
+    title: Has SECURITY.md
+    tier: Baseline
+    tags: [security, docs]
+    check: file_exists
+    paths: [SECURITY.md, .gitlab/SECURITY.md, docs/SECURITY.md]
+    fix_hint: Add a SECURITY.md describing how to report vulnerabilities.
+
+  - key: has_codeowners
+    title: Has CODEOWNERS
+    tier: Baseline
+    tags: [governance]
+    check: file_exists
+    paths: [CODEOWNERS, .gitlab/CODEOWNERS, docs/CODEOWNERS]
+    fix_hint: Add a CODEOWNERS file at root, in .gitlab/, or in docs/.
+
+  - key: requires_status_checks
+    title: Requires status checks before merging
+    tier: Baseline
+    tags: [governance, ci]
+    check: project_field_truthy
+    field: only_allow_merge_if_pipeline_succeeds
+    fix_hint: Settings → Merge requests → "Pipelines must succeed".
+
+  - key: has_test_directory
+    title: Has test directory
+    tier: Baseline
+    tags: [quality]
+    check: file_exists
+    paths: [tests, test, __tests__, spec]
+    fix_hint: "Create one of: tests/, test/, __tests__/, spec/"
+
+  - key: has_required_reviewers
+    title: Has required reviewers
+    tier: Baseline
+    tags: [security, governance]
+    check: required_reviewers
+    min_approvers: 1
+    fix_hint: Settings → Merge request approvals → require ≥ 1 approver.
+
+  - key: has_branch_protection
+    title: Has branch protection
+    tier: Baseline
+    tags: [security, governance]
+    check: protected_default_branch
+    fix_hint: Settings → Repository → Protected branches → protect the default branch.
+
+  - key: has_ci_workflow
+    title: Has CI workflow
+    tier: Baseline
+    tags: [ci]
+    check: file_exists
+    paths: [.gitlab-ci.yml]
+    fix_hint: Add a .gitlab-ci.yml at the repo root, even a minimal one.
+
+  - key: has_activity
+    title: Has recent activity
+    tier: Baseline
+    tags: [hygiene]
+    check: activity_within
+    max_days: 90
+    fix_hint: Push at least once every 90 days, or archive the repo.
+
+  - key: has_repo_description
+    title: Has repo description
+    tier: Baseline
+    tags: [docs]
+    check: project_field_truthy
+    field: description
+    fix_hint: Settings → General → set a one-line project description.
+
+  - key: has_substantial_readme
+    title: Has substantial README
+    tier: Baseline
+    tags: [docs]
+    check: file_size_min
+    paths: [README.md, README.rst, README.txt, README]
+    min_bytes: 500
+    fix_hint: README ≥ 500 bytes covering what / why / how to run.
+
+  - key: has_license
+    title: Has LICENSE
+    tier: Baseline
+    tags: [legal]
+    check: file_exists
+    paths: [LICENSE, LICENSE.md, LICENSE.txt, COPYING]
+    fix_hint: Add a LICENSE file (MIT, Apache-2.0, etc.) so usage rights are unambiguous.
+
+  # ===== Security (industry best practices for repo-level security) =====
+
+  - key: repo_is_private
+    title: Repository is not public
+    tier: Security
+    tags: [security]
+    check: project_field_not_in
+    field: visibility
+    forbidden: [public]
+    fix_hint: Settings → General → Visibility → set to Private (or Internal for trusted SSO users).
+
+  - key: no_force_push_default_branch
+    title: Force-push blocked on default branch
+    tier: Security
+    tags: [security, governance]
+    check: default_branch_no_force_push
+    fix_hint: Settings → Repository → Protected branches → set "Allowed to force push" to No-one.
+
+  - key: has_protected_tags
+    title: Has protected tags
+    tier: Security
+    tags: [security, supply-chain]
+    check: has_protected_tags
+    fix_hint: Settings → Repository → Protected tags → protect at least a release pattern (e.g. v*).
+
+  - key: mr_deletes_source_branch
+    title: MR deletes source branch on merge
+    tier: Security
+    tags: [hygiene, governance]
+    check: project_field_truthy
+    field: remove_source_branch_after_merge
+    fix_hint: Settings → Merge requests → "Enable 'Delete source branch' option by default".
+
+  - key: discussions_resolved_before_merge
+    title: Discussions must be resolved before merge
+    tier: Security
+    tags: [governance]
+    check: project_field_truthy
+    field: only_allow_merge_if_all_discussions_are_resolved
+    fix_hint: Settings → Merge requests → "All discussions must be resolved".
+
+  - key: linear_history
+    title: Linear history enforced (no merge commits)
+    tier: Security
+    tags: [governance]
+    check: project_field_not_in
+    field: merge_method
+    forbidden: [merge]
+    fix_hint: Settings → Merge requests → set merge method to Fast-forward or Rebase merge.
+
+  # ===== Universal best practice =====
+
+  - key: has_contributing
+    title: Has CONTRIBUTING.md
+    tier: Universal best practice
+    tags: [docs]
+    check: file_exists
+    paths: [CONTRIBUTING.md, CONTRIBUTING, .gitlab/CONTRIBUTING.md, docs/CONTRIBUTING.md]
+    fix_hint: Add a CONTRIBUTING.md describing how new contributors should set up and submit changes.
+
+  - key: has_changelog
+    title: Has CHANGELOG.md
+    tier: Universal best practice
+    tags: [docs, releases]
+    check: file_exists
+    paths: [CHANGELOG.md, CHANGELOG, HISTORY.md, RELEASES.md]
+    fix_hint: Maintain a CHANGELOG.md following Keep-a-Changelog or semver release notes.
+
+  - key: has_dependency_lockfile
+    title: Has dependency lockfile
+    tier: Universal best practice
+    tags: [supply-chain, quality]
+    check: file_exists
+    paths:
+      - package-lock.json
+      - yarn.lock
+      - pnpm-lock.yaml
+      - poetry.lock
+      - Pipfile.lock
+      - uv.lock
+      - Cargo.lock
+      - go.sum
+      - Gemfile.lock
+      - composer.lock
+      - mix.lock
+      - pubspec.lock
+    fix_hint: Commit your package manager's lockfile so builds are reproducible.
+
+  - key: has_dependency_automation
+    title: Has dependency-update automation
+    tier: Universal best practice
+    tags: [supply-chain, security]
+    check: file_exists
+    paths:
+      - renovate.json
+      - .renovaterc
+      - .renovaterc.json
+      - renovate.json5
+      - .gitlab/dependabot.yml
+      - dependabot.yml
+    fix_hint: Add a Renovate or Dependabot config so dependency PRs land automatically.
+
+  - key: has_mr_template
+    title: Has merge-request template
+    tier: Universal best practice
+    tags: [governance, docs]
+    check: directory_has_files
+    directories: [.gitlab/merge_request_templates]
+    fix_hint: Drop a default.md into .gitlab/merge_request_templates/ to standardize MR descriptions.
+
+  - key: has_issue_templates
+    title: Has issue templates
+    tier: Universal best practice
+    tags: [governance, docs]
+    check: directory_has_files
+    directories: [.gitlab/issue_templates]
+    fix_hint: Add at least one template under .gitlab/issue_templates/.
+
+  - key: default_branch_is_main
+    title: Default branch is "main"
+    tier: Universal best practice
+    tags: [hygiene]
+    check: project_field_equals
+    field: default_branch
+    value: main
+    fix_hint: Rename the default branch to main (or master → main migration plan).
+
+  - key: has_linter_config
+    title: Has linter config
+    tier: Universal best practice
+    tags: [quality]
+    check: file_exists
+    paths:
+      - .eslintrc
+      - .eslintrc.json
+      - .eslintrc.js
+      - .eslintrc.yml
+      - .eslintrc.cjs
+      - eslint.config.js
+      - eslint.config.mjs
+      - .ruff.toml
+      - ruff.toml
+      - .pylintrc
+      - pylintrc
+      - .flake8
+      - setup.cfg
+      - .golangci.yml
+      - .golangci.yaml
+      - clippy.toml
+      - biome.json
+      - .biomerc
+      - .rubocop.yml
+      - .stylelintrc
+      - .stylelintrc.json
+    fix_hint: Add a linter config (ESLint, Ruff, golangci-lint, Clippy, RuboCop, etc.).
+
+  - key: has_gitignore
+    title: Has .gitignore
+    tier: Universal best practice
+    tags: [hygiene]
+    check: file_size_min
+    paths: [.gitignore]
+    min_bytes: 50
+    fix_hint: Add a .gitignore (≥ 50 bytes) to keep secrets and binaries out of the repo.
+
+  # ===== High-leverage / opinionated =====
+
+  - key: has_code_of_conduct
+    title: Has CODE_OF_CONDUCT.md
+    tier: High-leverage
+    tags: [docs]
+    check: file_exists
+    paths: [CODE_OF_CONDUCT.md, .gitlab/CODE_OF_CONDUCT.md, docs/CODE_OF_CONDUCT.md]
+    fix_hint: Adopt a Code of Conduct (e.g. Contributor Covenant).
+
+  - key: has_pre_commit
+    title: Has pre-commit config
+    tier: High-leverage
+    tags: [quality]
+    check: file_exists
+    paths: [.pre-commit-config.yaml, .pre-commit-config.yml]
+    fix_hint: Add a .pre-commit-config.yaml so common checks run before commits.
+
+  - key: has_editorconfig
+    title: Has EditorConfig
+    tier: High-leverage
+    tags: [quality]
+    check: file_exists
+    paths: [.editorconfig]
+    fix_hint: Add an .editorconfig so all editors apply the same indentation/charset.
+
+  - key: has_formatter_config
+    title: Has formatter config
+    tier: High-leverage
+    tags: [quality]
+    check: file_exists
+    paths:
+      - .prettierrc
+      - .prettierrc.json
+      - .prettierrc.yml
+      - .prettierrc.yaml
+      - .prettierrc.js
+      - prettier.config.js
+      - prettier.config.mjs
+      - rustfmt.toml
+      - .rustfmt.toml
+      - .editorconfig
+      - biome.json
+    fix_hint: Add a formatter config (Prettier, Black via pyproject.toml, gofmt is implicit, rustfmt, Biome).
+
+  - key: not_legacy_default_branch
+    title: Default branch is not "master"
+    tier: High-leverage
+    tags: [hygiene]
+    check: project_field_not_in
+    field: default_branch
+    forbidden: [master]
+    fix_hint: Migrate from "master" to "main" (or another modern name).
+
+  - key: repo_not_bloated
+    title: Repository size within 500 MB
+    tier: High-leverage
+    tags: [hygiene]
+    check: repo_size_max
+    max_bytes: 524288000
+    fix_hint: Use Git LFS for binaries; remove large committed assets via filter-repo.
+
+  - key: has_signed_commits_policy
+    title: Has signed-commit policy
+    tier: High-leverage
+    tags: [security, supply-chain]
+    check: signed_commits
+    fix_hint: Settings → Repository → Push rules → require signed commits or committer match.
+
+  # ===== Modern / AI-era =====
+
+  - key: has_ai_assistant_guidance
+    title: Has AI-assistant guidance
+    tier: Modern / AI-era
+    tags: [docs, ai-era]
+    check: file_exists
+    paths:
+      - CLAUDE.md
+      - .cursorrules
+      - .cursor/rules
+      - AGENTS.md
+      - .windsurfrules
+      - .github/copilot-instructions.md
+      - AI.md
+    fix_hint: Add a CLAUDE.md / AGENTS.md / .cursorrules guiding AI assistants in the codebase.
+
+  - key: has_devcontainer
+    title: Has devcontainer config
+    tier: Modern / AI-era
+    tags: [dx]
+    check: file_exists
+    paths: [.devcontainer/devcontainer.json, .devcontainer.json]
+    fix_hint: Add .devcontainer/devcontainer.json so contributors get a one-click reproducible dev env.
+
+  - key: has_one_command_setup
+    title: Has one-command setup
+    tier: Modern / AI-era
+    tags: [dx]
+    check: file_exists
+    paths: [Makefile, makefile, GNUmakefile, Justfile, justfile, Taskfile.yml, Taskfile.yaml]
+    fix_hint: Provide a Makefile / Justfile / Taskfile so `make`, `just`, or `task` boots the project.
+
+  - key: has_api_spec
+    title: Has API spec
+    tier: Modern / AI-era
+    tags: [docs, api]
+    check: file_exists
+    paths:
+      - openapi.yaml
+      - openapi.yml
+      - openapi.json
+      - swagger.yaml
+      - swagger.yml
+      - swagger.json
+      - api.yaml
+      - api.yml
+      - api/openapi.yaml
+      - docs/openapi.yaml
+    fix_hint: Publish an OpenAPI / Swagger spec (or proto files) describing the public surface.
+
+  - key: has_adr_folder
+    title: Has Architecture Decision Records folder
+    tier: Modern / AI-era
+    tags: [docs, architecture]
+    check: directory_has_files
+    directories:
+      - docs/adr
+      - docs/decisions
+      - architecture/decisions
+      - .adr-dir
+      - decisions
+    fix_hint: Capture key decisions in ADR format under docs/adr/ (Spotify / Zalando style).

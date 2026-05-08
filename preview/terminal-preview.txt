@@ -1,0 +1,52 @@
+┏━ Group: acme-corp/platform ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                ┃
+┃                                     59%                                        ┃
+┃                                  PASS RATE                                     ┃
+┃                              🔴 URGENT                                         ┃
+┃                                                                                ┃
+┃     15 repos scanned · 38 rules · 3/15 fully compliant · 1 skipped             ┃
+┃                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Scanned 2026-05-01 18:30 UTC · rules: built-in ━━━━┛
+
+╭─ By tier ─────────────────────────────────────────────────────────────────────╮
+│                                                                                │
+│  Baseline                   ██████████████████░░░░  82%   18/22   🟢 Healthy   │
+│  Security                   ███████████░░░░░░░░░░░  50%    6/12   🔴 Urgent    │
+│  Universal best practice    ██████████████░░░░░░░░  67%   12/18   🟡 Needs work│
+│  High-leverage              ████████████░░░░░░░░░░  57%    8/14   🔴 Urgent    │
+│  Modern / AI-era            █████████░░░░░░░░░░░░░  40%    4/10   🔴 Urgent    │
+│                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────╯
+
+╭─ ⚠️  Critical issues ──────────────────────────────────────────────────────────╮
+│                                                                                │
+│  🔒 Security signal: 50% — 🔴 Urgent                                           │
+│     #12 Repository is not public — 4/15 repos failing                          │
+│     #13 Force-push blocked on default branch — 11/15 repos failing             │
+│     #5  Has required reviewers — 10/15 repos failing                           │
+│                                                                                │
+│  ⚡ Top 3 fixes (by impact):                                                    │
+│     # 1 Has SECURITY.md — 12/15 repos failing  (20% pass)                      │
+│     # 2 Has CODEOWNERS  — 11/15 repos failing  (27% pass)                      │
+│     # 5 Has required reviewers — 10/15 repos failing  (33% pass)               │
+│                                                                                │
+│  🏚️  Most-broken repos:                                                        │
+│     • acme-corp/platform/legacy-svc       — 18 of 38 rules failing                  │
+│     • acme-corp/platform/data-pipeline    — 15 of 38 rules failing                  │
+│     • acme-corp/platform/old-microservice — 12 of 38 rules failing                  │
+│                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────╯
+
+╭─ 💡 Biggest lever ─────────────────────────────────────────────────────────────╮
+│                                                                                │
+│  Fixing Has SECURITY.md in the 12 repos missing it would raise compliance      │
+│  from 20% → 60% (+40 pts).                                                     │
+│                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────╯
+
+📄 Full report saved: report.md
+   Open it for the rule-by-rule table and per-repo details, or rerun with
+   --full / --detail to print here.
+
+(actual terminal output is colourised: pass-rate %, RAG pills, bar fills, and
+biggest-lever delta render in green/yellow/red.)

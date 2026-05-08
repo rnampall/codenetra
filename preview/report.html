@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>20260430-173000-group-acme-corp — Codenetra</title>
+<style>
+  /* ---------- Codenetra brand palette ----------
+     Override these variables to match your exact brand standards.
+     The rest of the stylesheet refers to them only — change here, see everywhere. */
+  :root {
+    --codenetra-navy:        #0A1F44;
+    --codenetra-navy-soft:   #1E365C;
+    --codenetra-green:       #1FE1AF;
+    --codenetra-green-dark:  #14B689;
+    --codenetra-blue:        #2E55E0;
+
+    --brand-primary:       var(--codenetra-navy);
+    --brand-accent:        var(--codenetra-green);
+    --brand-accent-hover:  var(--codenetra-green-dark);
+    --brand-link:          var(--codenetra-blue);
+
+    --text-body:           #1E293B;
+    --text-muted:          #64748B;
+    --border-soft:         #E2E8F0;
+    --bg-soft:             #F8FAFC;
+    --bg-tile:             #FFFFFF;
+
+    --rag-green-bg:   #D1FAE5;
+    --rag-green-fg:   #065F46;
+    --rag-yellow-bg:  #FEF3C7;
+    --rag-yellow-fg:  #92400E;
+    --rag-red-bg:     #FEE2E2;
+    --rag-red-fg:     #991B1B;
+
+    --gradient-brand: linear-gradient(135deg, var(--codenetra-navy) 0%, var(--codenetra-blue) 55%, var(--codenetra-green) 100%);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    max-width: 960px;
+    margin: 2em auto;
+    padding: 0 1.25em 4em;
+    color: var(--text-body);
+    line-height: 1.55;
+    background: #fff;
+  }
+
+  header {
+    position: relative;
+    border-bottom: none;
+    padding: 1em 1.25em;
+    margin-bottom: 1.75em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--gradient-brand);
+    border-radius: 8px;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(10, 31, 68, 0.12);
+  }
+  header a.logo {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    font-size: 1.4em;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+  }
+  header a.logo .logo-tag {
+    color: var(--codenetra-green);
+    font-weight: 500;
+    letter-spacing: normal;
+    font-size: 0.75em;
+    opacity: 0.85;
+  }
+  header .nav { font-size: 0.85em; color: rgba(255, 255, 255, 0.85); }
+  header .nav a { color: inherit; margin-left: 1em; text-decoration: none; }
+  header .nav a:hover { color: var(--codenetra-green); }
+
+  h1, h2, h3 { color: var(--brand-primary); }
+  h1 { margin-top: 0.5em; font-size: 1.7em; }
+  h2 {
+    margin-top: 1.75em; font-size: 1.25em;
+    border-bottom: 2px solid var(--brand-accent);
+    padding-bottom: 0.3em;
+    display: inline-block;
+  }
+  h3 { margin-top: 1.5em; font-size: 1.05em; }
+
+  form {
+    background: var(--bg-soft);
+    padding: 1.5em;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+  }
+  label { display: block; margin: 0.85em 0 0.25em; font-weight: 600; color: var(--brand-primary); }
+  input[type=text], input[type=number] {
+    width: 100%;
+    padding: 0.55em 0.7em;
+    border: 1px solid #CBD5E1;
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: inherit;
+    color: var(--text-body);
+  }
+  input[type=text]:focus, input[type=number]:focus {
+    outline: 2px solid var(--brand-accent);
+    outline-offset: -1px;
+    border-color: var(--brand-accent);
+  }
+  .radio-row { display: flex; gap: 1.5em; margin-top: 0.4em; }
+  .radio-row label, .checkbox-row label {
+    font-weight: normal; display: flex; align-items: center; gap: 0.4em; margin: 0;
+    color: var(--text-body);
+  }
+  .checkbox-row { margin-top: 0.85em; }
+
+  button[type=submit] {
+    background: var(--brand-accent);
+    color: var(--codenetra-navy);
+    border: none;
+    padding: 0.65em 1.6em;
+    border-radius: 999px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 6px rgba(31, 225, 175, 0.25);
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  button[type=submit]:hover {
+    background: var(--brand-accent-hover);
+    color: #fff;
+  }
+  button[type=submit]:active { transform: translateY(1px); }
+
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.95em; }
+  th, td { padding: 0.5em 0.75em; border-bottom: 1px solid var(--border-soft); text-align: left; }
+  th { background: var(--bg-soft); font-weight: 600; color: var(--brand-primary); }
+  td:nth-child(n+2), th:nth-child(n+2) { text-align: right; }
+
+  /* ---------- executive scorecard ---------- */
+  .scorecard table {
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
+    box-shadow: 0 1px 4px rgba(10, 31, 68, 0.05);
+  }
+  .scorecard th {
+    text-transform: uppercase;
+    font-size: 0.72em;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    text-align: center !important;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .scorecard td {
+    text-align: center !important;
+    font-size: 1.6em;
+    font-weight: 600;
+    color: var(--brand-primary);
+    padding: 0.75em 0.5em 1em;
+    background: var(--bg-tile);
+    border-bottom: none;
+  }
+  .scorecard td strong { color: var(--brand-accent-hover); font-weight: 700; }
+  .scorecard td .rag {
+    font-size: 0.7em;
+    padding: 0.25em 0.7em;
+    border-radius: 999px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .rag-green  { background: var(--rag-green-bg);  color: var(--rag-green-fg); }
+  .rag-yellow { background: var(--rag-yellow-bg); color: var(--rag-yellow-fg); }
+  .rag-red    { background: var(--rag-red-bg);    color: var(--rag-red-fg); }
+
+  blockquote {
+    border-left: 4px solid var(--brand-accent);
+    background: #ECFDF5;
+    padding: 0.75em 1em;
+    margin: 1.25em 0;
+    color: var(--brand-primary);
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p { margin: 0; }
+
+  details { margin: 0.5em 0; }
+  summary { cursor: pointer; padding: 0.4em 0; color: var(--brand-primary); font-weight: 500; }
+  summary:hover { color: var(--brand-accent-hover); }
+
+  code {
+    background: var(--bg-soft);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    color: var(--codenetra-navy-soft);
+  }
+  pre {
+    background: var(--codenetra-navy);
+    color: #E2E8F0;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  hr { border: none; border-top: 1px solid var(--border-soft); margin: 2em 0; }
+  a { color: var(--brand-link); }
+  a:hover { color: var(--codenetra-navy); }
+
+  .meta { color: var(--text-muted); font-size: 0.9em; }
+  .meta code { background: var(--rag-yellow-bg); color: var(--rag-yellow-fg); }
+
+  .button-row { margin: 1em 0 1.5em; display: flex; gap: 0.5em; flex-wrap: wrap; }
+  .button-row a {
+    background: var(--bg-soft); color: var(--brand-primary);
+    padding: 0.5em 1em; text-decoration: none;
+    border-radius: 999px; border: 1px solid var(--border-soft);
+    font-size: 0.9em; font-weight: 500;
+  }
+  .button-row a:hover {
+    background: var(--brand-accent); color: var(--codenetra-navy);
+    border-color: var(--brand-accent);
+  }
+
+  .err {
+    background: #FEF2F2; border: 1px solid #FECACA;
+    color: #991B1B; padding: 1em 1.25em; border-radius: 6px;
+  }
+  .ok-pill   { color: var(--brand-accent-hover); font-weight: 600; }
+  .miss-pill { color: #DC2626; font-weight: 600; }
+
+  /* ---------- async scan progress card ---------- */
+  .scan-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 1.5em 1.75em;
+    margin-top: 1.25em;
+  }
+  .scan-card.failed {
+    border-color: #FECACA;
+    background: #FEF2F2;
+  }
+  .scan-headline {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 0.75em;
+  }
+  .scan-pct {
+    font-size: 2.4em; font-weight: 700;
+    color: var(--brand-primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .scan-counts {
+    color: var(--text-muted); font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-track {
+    width: 100%;
+    height: 14px;
+    background: #E2E8F0;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(10, 31, 68, 0.08);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--codenetra-blue), var(--codenetra-green));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  /* Indeterminate state — used while we're still enumerating repos and
+     don't yet know the total. The bar slides side-to-side to signal
+     "working but progress is unmeasured". */
+  .progress-fill.indeterminate {
+    animation: indeterminate-slide 1.6s ease-in-out infinite;
+    background-size: 200% 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--codenetra-blue) 30%,
+      var(--codenetra-green) 70%,
+      transparent 100%
+    );
+  }
+  @keyframes indeterminate-slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+  .scan-meta {
+    margin-top: 0.85em;
+    display: flex; flex-wrap: wrap; gap: 1.25em;
+    color: var(--text-muted); font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+  }
+  .scan-meta span { display: inline-flex; align-items: center; gap: 0.35em; }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 31, 68, 0.55);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.75em;
+    color: #fff;
+  }
+  .overlay.show { display: flex; }
+  .spinner {
+    width: 44px; height: 44px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--brand-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer { color: var(--text-muted); font-size: 0.85em; margin-top: 4em; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo">CODENETRA <span class="logo-tag">नेत्र</span></a>
+  <nav class="nav">
+    <a href="/">Scan</a>
+  </nav>
+</header>
+
+
+<div class="button-row">
+  <a href="/">← Run another scan</a>
+  <a href="/reports/20260430-173000-group-acme-corp.md" download>Download .md</a>
+</div>
+
+<div class="report-body">
+  <h1>Codenetra — Org Compliance Report</h1>
+<p><strong>Group:</strong> acme
+<strong>Scanned:</strong> 2026-05-08 16:12 UTC</p>
+<h2>Scorecard</h2>
+<div class="scorecard">
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Repos scanned</th>
+<th style="text-align: center;">Rules</th>
+<th style="text-align: center;">Fully compliant</th>
+<th style="text-align: center;">Pass rate</th>
+<th style="text-align: center;">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>2</strong></td>
+<td style="text-align: center;"><strong>38</strong></td>
+<td style="text-align: center;"><strong>1 / 2</strong> (50%)</td>
+<td style="text-align: center;"><strong>51%</strong></td>
+<td style="text-align: center;"><span class="rag rag-red">🔴 Urgent</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Insights</h3>
+<p><strong>Top 3 weakest rules</strong></p>
+<ul>
+<li><strong>Has CI workflow</strong> — 1 of 2 repos failing (50% pass rate)</li>
+<li><strong>Has CODEOWNERS</strong> — 1 of 2 repos failing (50% pass rate)</li>
+<li><strong>Has LICENSE</strong> — 1 of 2 repos failing (50% pass rate)</li>
+</ul>
+<p><strong>Top 1 weakest repo</strong></p>
+<ul>
+<li><a href="https://gl/legacy">acme/legacy</a> — 37 of 38 rules failing</li>
+</ul>
+<p><strong>Security signal</strong> — pass rate over <code>SECURITY.md</code>, branch protection, and required reviewers: <span class="rag rag-red">🔴 56% — Urgent</span></p>
+<hr />
+<h2>Summary</h2>
+<p><strong>By tier:</strong>
+- <strong>Baseline</strong> — 12 / 22 checks passing (55%) <span class="rag rag-red">🔴</span>
+- <strong>Security</strong> — 6 / 12 checks passing (50%) <span class="rag rag-red">🔴</span>
+- <strong>Universal best practice</strong> — 9 / 18 checks passing (50%) <span class="rag rag-red">🔴</span>
+- <strong>High-leverage</strong> — 7 / 14 checks passing (50%) <span class="rag rag-red">🔴</span>
+- <strong>Modern / AI-era</strong> — 5 / 10 checks passing (50%) <span class="rag rag-red">🔴</span></p>
+<details open="open">
+<summary>Detailed breakdown — 38 rules across 5 tiers</summary>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Sl. No.</th>
+<th style="text-align: left;">Tier</th>
+<th style="text-align: left;">Rule</th>
+<th style="text-align: right;">Passing</th>
+<th style="text-align: right;">Failing</th>
+<th style="text-align: right;">Pass rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has CI workflow</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has CODEOWNERS</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has LICENSE</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has SECURITY.md</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has recent activity</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has repo description</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has required reviewers</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has substantial README</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has test directory</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Requires status checks before merging</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">Has branch protection</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">100%</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">Discussions must be resolved before merge</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">Force-push blocked on default branch</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">Has protected tags</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">Linear history enforced (no merge commits)</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">MR deletes source branch on merge</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;">Repository is not public</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">24</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Default branch is "main"</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">26</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has .gitignore</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has CHANGELOG.md</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has CONTRIBUTING.md</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has dependency lockfile</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">21</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has dependency-update automation</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">23</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has issue templates</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">25</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has linter config</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">22</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;">Has merge-request template</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Default branch is not "master"</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">27</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Has CODE_OF_CONDUCT.md</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">29</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Has EditorConfig</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Has formatter config</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">28</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Has pre-commit config</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">33</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Has signed-commit policy</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">32</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;">Repository size within 500 MB</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">34</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;">Has AI-assistant guidance</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">37</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;">Has API spec</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">38</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;">Has Architecture Decision Records folder</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">35</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;">Has devcontainer config</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+<tr>
+<td style="text-align: center;">36</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;">Has one-command setup</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">50%</td>
+</tr>
+</tbody>
+</table>
+</details>
+<details>
+<summary>Rule reference — what each rule checks and how to fix it</summary>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Sl. No.</th>
+<th style="text-align: left;">Tier</th>
+<th style="text-align: left;">Rule</th>
+<th style="text-align: left;">How to fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has SECURITY.md</strong></td>
+<td style="text-align: left;">Add a SECURITY.md describing how to report vulnerabilities.</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has CODEOWNERS</strong></td>
+<td style="text-align: left;">Add a CODEOWNERS file at root, in .gitlab/, or in docs/.</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Requires status checks before merging</strong></td>
+<td style="text-align: left;">Settings → Merge requests → "Pipelines must succeed".</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has test directory</strong></td>
+<td style="text-align: left;">Create one of: tests/, test/, <strong>tests</strong>/, spec/</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has required reviewers</strong></td>
+<td style="text-align: left;">Settings → Merge request approvals → require ≥ 1 approver.</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has branch protection</strong></td>
+<td style="text-align: left;">Settings → Repository → Protected branches → protect the default branch.</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has CI workflow</strong></td>
+<td style="text-align: left;">Add a .gitlab-ci.yml at the repo root, even a minimal one.</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has recent activity</strong></td>
+<td style="text-align: left;">Push at least once every 90 days, or archive the repo.</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has repo description</strong></td>
+<td style="text-align: left;">Settings → General → set a one-line project description.</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has substantial README</strong></td>
+<td style="text-align: left;">README ≥ 500 bytes covering what / why / how to run.</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><strong>Has LICENSE</strong></td>
+<td style="text-align: left;">Add a LICENSE file (MIT, Apache-2.0, etc.) so usage rights are unambiguous.</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;"><strong>Repository is not public</strong></td>
+<td style="text-align: left;">Settings → General → Visibility → set to Private (or Internal for trusted SSO users).</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;"><strong>Force-push blocked on default branch</strong></td>
+<td style="text-align: left;">Settings → Repository → Protected branches → set "Allowed to force push" to No-one.</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;"><strong>Has protected tags</strong></td>
+<td style="text-align: left;">Settings → Repository → Protected tags → protect at least a release pattern (e.g. v*).</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;"><strong>MR deletes source branch on merge</strong></td>
+<td style="text-align: left;">Settings → Merge requests → "Enable 'Delete source branch' option by default".</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;"><strong>Discussions must be resolved before merge</strong></td>
+<td style="text-align: left;">Settings → Merge requests → "All discussions must be resolved".</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;">Security</td>
+<td style="text-align: left;"><strong>Linear history enforced (no merge commits)</strong></td>
+<td style="text-align: left;">Settings → Merge requests → set merge method to Fast-forward or Rebase merge.</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has CONTRIBUTING.md</strong></td>
+<td style="text-align: left;">Add a CONTRIBUTING.md describing how new contributors should set up and submit changes.</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has CHANGELOG.md</strong></td>
+<td style="text-align: left;">Maintain a CHANGELOG.md following Keep-a-Changelog or semver release notes.</td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has dependency lockfile</strong></td>
+<td style="text-align: left;">Commit your package manager's lockfile so builds are reproducible.</td>
+</tr>
+<tr>
+<td style="text-align: center;">21</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has dependency-update automation</strong></td>
+<td style="text-align: left;">Add a Renovate or Dependabot config so dependency PRs land automatically.</td>
+</tr>
+<tr>
+<td style="text-align: center;">22</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has merge-request template</strong></td>
+<td style="text-align: left;">Drop a default.md into .gitlab/merge_request_templates/ to standardize MR descriptions.</td>
+</tr>
+<tr>
+<td style="text-align: center;">23</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has issue templates</strong></td>
+<td style="text-align: left;">Add at least one template under .gitlab/issue_templates/.</td>
+</tr>
+<tr>
+<td style="text-align: center;">24</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Default branch is "main"</strong></td>
+<td style="text-align: left;">Rename the default branch to main (or master → main migration plan).</td>
+</tr>
+<tr>
+<td style="text-align: center;">25</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has linter config</strong></td>
+<td style="text-align: left;">Add a linter config (ESLint, Ruff, golangci-lint, Clippy, RuboCop, etc.).</td>
+</tr>
+<tr>
+<td style="text-align: center;">26</td>
+<td style="text-align: left;">Universal best practice</td>
+<td style="text-align: left;"><strong>Has .gitignore</strong></td>
+<td style="text-align: left;">Add a .gitignore (≥ 50 bytes) to keep secrets and binaries out of the repo.</td>
+</tr>
+<tr>
+<td style="text-align: center;">27</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Has CODE_OF_CONDUCT.md</strong></td>
+<td style="text-align: left;">Adopt a Code of Conduct (e.g. Contributor Covenant).</td>
+</tr>
+<tr>
+<td style="text-align: center;">28</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Has pre-commit config</strong></td>
+<td style="text-align: left;">Add a .pre-commit-config.yaml so common checks run before commits.</td>
+</tr>
+<tr>
+<td style="text-align: center;">29</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Has EditorConfig</strong></td>
+<td style="text-align: left;">Add an .editorconfig so all editors apply the same indentation/charset.</td>
+</tr>
+<tr>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Has formatter config</strong></td>
+<td style="text-align: left;">Add a formatter config (Prettier, Black via pyproject.toml, gofmt is implicit, rustfmt, Biome).</td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Default branch is not "master"</strong></td>
+<td style="text-align: left;">Migrate from "master" to "main" (or another modern name).</td>
+</tr>
+<tr>
+<td style="text-align: center;">32</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Repository size within 500 MB</strong></td>
+<td style="text-align: left;">Use Git LFS for binaries; remove large committed assets via filter-repo.</td>
+</tr>
+<tr>
+<td style="text-align: center;">33</td>
+<td style="text-align: left;">High-leverage</td>
+<td style="text-align: left;"><strong>Has signed-commit policy</strong></td>
+<td style="text-align: left;">Settings → Repository → Push rules → require signed commits or committer match.</td>
+</tr>
+<tr>
+<td style="text-align: center;">34</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;"><strong>Has AI-assistant guidance</strong></td>
+<td style="text-align: left;">Add a CLAUDE.md / AGENTS.md / .cursorrules guiding AI assistants in the codebase.</td>
+</tr>
+<tr>
+<td style="text-align: center;">35</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;"><strong>Has devcontainer config</strong></td>
+<td style="text-align: left;">Add .devcontainer/devcontainer.json so contributors get a one-click reproducible dev env.</td>
+</tr>
+<tr>
+<td style="text-align: center;">36</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;"><strong>Has one-command setup</strong></td>
+<td style="text-align: left;">Provide a Makefile / Justfile / Taskfile so <code>make</code>, <code>just</code>, or <code>task</code> boots the project.</td>
+</tr>
+<tr>
+<td style="text-align: center;">37</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;"><strong>Has API spec</strong></td>
+<td style="text-align: left;">Publish an OpenAPI / Swagger spec (or proto files) describing the public surface.</td>
+</tr>
+<tr>
+<td style="text-align: center;">38</td>
+<td style="text-align: left;">Modern / AI-era</td>
+<td style="text-align: left;"><strong>Has Architecture Decision Records folder</strong></td>
+<td style="text-align: left;">Capture key decisions in ADR format under docs/adr/ (Spotify / Zalando style).</td>
+</tr>
+</tbody>
+</table>
+</details>
+<h2>✅ Fully compliant (1 repos)</h2>
+<details>
+<summary>All rules passing</summary>
+<ul>
+<li><a href="https://gl/api">acme/api</a></li>
+</ul>
+</details>
+<h2>❌ Non-compliant (1 repos)</h2>
+<details>
+<summary><a href="https://gl/legacy">acme/legacy</a> — 37 failing</summary>
+<ul>
+<li><strong>#1</strong> Has SECURITY.md — <em>none of: SECURITY.md, .gitlab/SECURITY.md, docs/SECURITY.md</em></li>
+<li><strong>#2</strong> Has CODEOWNERS — <em>none of: CODEOWNERS, .gitlab/CODEOWNERS, docs/CODEOWNERS</em></li>
+<li><strong>#3</strong> Requires status checks before merging — <em>only_allow_merge_if_pipeline_succeeds is empty</em></li>
+<li><strong>#4</strong> Has test directory — <em>none of: tests, test, <strong>tests</strong>, spec</em></li>
+<li><strong>#5</strong> Has required reviewers — <em>no approval rule with approvals_required ≥ 1</em></li>
+<li><strong>#7</strong> Has CI workflow — <em>no .gitlab-ci.yml</em></li>
+<li><strong>#8</strong> Has recent activity — <em>last activity 400 days ago (window is 90)</em></li>
+<li><strong>#9</strong> Has repo description — <em>description is empty</em></li>
+<li><strong>#10</strong> Has substantial README — <em>no README.md</em></li>
+<li><strong>#11</strong> Has LICENSE — <em>none of: LICENSE, LICENSE.md, LICENSE.txt, COPYING</em></li>
+<li><strong>#12</strong> Repository is not public — <em>visibility is 'public' (forbidden)</em></li>
+<li><strong>#13</strong> Force-push blocked on default branch — <em>force-push allowed on master (allow_force_push=True)</em></li>
+<li><strong>#14</strong> Has protected tags — <em>no protected tags configured</em></li>
+<li><strong>#15</strong> MR deletes source branch on merge — <em>remove_source_branch_after_merge is empty</em></li>
+<li><strong>#16</strong> Discussions must be resolved before merge — <em>only_allow_merge_if_all_discussions_are_resolved is empty</em></li>
+<li><strong>#17</strong> Linear history enforced (no merge commits) — <em>merge_method is 'merge' (forbidden)</em></li>
+<li><strong>#18</strong> Has CONTRIBUTING.md — <em>none of: CONTRIBUTING.md, CONTRIBUTING, .gitlab/CONTRIBUTING.md, docs/CONTRIBUTING.md</em></li>
+<li><strong>#19</strong> Has CHANGELOG.md — <em>none of: CHANGELOG.md, CHANGELOG, HISTORY.md, RELEASES.md</em></li>
+<li><strong>#20</strong> Has dependency lockfile — <em>none of: package-lock.json, yarn.lock, pnpm-lock.yaml, poetry.lock, Pipfile.lock, uv.lock, Cargo.lock, go.sum, Gemfile.lock, composer.lock, mix.lock, pubspec.lock</em></li>
+<li><strong>#21</strong> Has dependency-update automation — <em>none of: renovate.json, .renovaterc, .renovaterc.json, renovate.json5, .gitlab/dependabot.yml, dependabot.yml</em></li>
+<li><strong>#22</strong> Has merge-request template — <em>no .gitlab/merge_request_templates/ (or it's empty)</em></li>
+<li><strong>#23</strong> Has issue templates — <em>no .gitlab/issue_templates/ (or it's empty)</em></li>
+<li><strong>#24</strong> Default branch is "main" — <em>default_branch is 'master', expected 'main'</em></li>
+<li><strong>#25</strong> Has linter config — <em>none of: .eslintrc, .eslintrc.json, .eslintrc.js, .eslintrc.yml, .eslintrc.cjs, eslint.config.js, eslint.config.mjs, .ruff.toml, ruff.toml, .pylintrc, pylintrc, .flake8, setup.cfg, .golangci.yml, .golangci.yaml, clippy.toml, biome.json, .biomerc, .rubocop.yml, .stylelintrc, .stylelintrc.json</em></li>
+<li><strong>#26</strong> Has .gitignore — <em>no .gitignore</em></li>
+<li><strong>#27</strong> Has CODE_OF_CONDUCT.md — <em>none of: CODE_OF_CONDUCT.md, .gitlab/CODE_OF_CONDUCT.md, docs/CODE_OF_CONDUCT.md</em></li>
+<li><strong>#28</strong> Has pre-commit config — <em>none of: .pre-commit-config.yaml, .pre-commit-config.yml</em></li>
+<li><strong>#29</strong> Has EditorConfig — <em>no .editorconfig</em></li>
+<li><strong>#30</strong> Has formatter config — <em>none of: .prettierrc, .prettierrc.json, .prettierrc.yml, .prettierrc.yaml, .prettierrc.js, prettier.config.js, prettier.config.mjs, rustfmt.toml, .rustfmt.toml, .editorconfig, biome.json</em></li>
+<li><strong>#31</strong> Default branch is not "master" — <em>default_branch is 'master' (forbidden)</em></li>
+<li><strong>#32</strong> Repository size within 500 MB — <em>600 MB &gt; 500 MB limit</em></li>
+<li><strong>#33</strong> Has signed-commit policy — <em>no signed-commit / committer policy on push_rules</em></li>
+<li><strong>#34</strong> Has AI-assistant guidance — <em>none of: CLAUDE.md, .cursorrules, .cursor/rules, AGENTS.md, .windsurfrules, .github/copilot-instructions.md, AI.md</em></li>
+<li><strong>#35</strong> Has devcontainer config — <em>none of: .devcontainer/devcontainer.json, .devcontainer.json</em></li>
+<li><strong>#36</strong> Has one-command setup — <em>none of: Makefile, makefile, GNUmakefile, Justfile, justfile, Taskfile.yml, Taskfile.yaml</em></li>
+<li><strong>#37</strong> Has API spec — <em>none of: openapi.yaml, openapi.yml, openapi.json, swagger.yaml, swagger.yml, swagger.json, api.yaml, api.yml, api/openapi.yaml, docs/openapi.yaml</em></li>
+<li><strong>#38</strong> Has Architecture Decision Records folder — <em>none of: docs/adr/, docs/decisions/, architecture/decisions/, .adr-dir/, decisions/</em></li>
+</ul>
+</details>
+<hr />
+<p><em>Generated by <a href="https://github.com/">Codenetra</a> v0.1.0 (नेत्र — the eye on every repo) — reads metadata only, never source.</em></p>
+</div>
+
+
+<footer>Codenetra v0.1.0 · the eye on every repo · reads metadata only, never source.</footer>
+</body>
+</html>
