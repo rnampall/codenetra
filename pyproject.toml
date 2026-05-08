@@ -31,12 +31,6 @@ classifiers = [
     "Topic :: Software Development :: Version Control :: Git",
     "Topic :: Security",
 ]
-
-[project.urls]
-Homepage = "https://github.com/rnampall/codenetra"
-Repository = "https://github.com/rnampall/codenetra"
-Issues = "https://github.com/rnampall/codenetra/issues"
-Changelog = "https://github.com/rnampall/codenetra/blob/main/CHANGELOG.md"
 dependencies = [
     "python-gitlab>=4.4.0",
     "click>=8.1.7",
@@ -55,6 +49,12 @@ dev = ["pytest>=8.0", "pytest-cov>=5.0"]
 
 [project.scripts]
 codenetra = "codenetra.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/<your-username>/codenetra"
+Repository = "https://github.com/<your-username>/codenetra"
+Issues = "https://github.com/<your-username>/codenetra/issues"
+Changelog = "https://github.com/<your-username>/codenetra/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 include = ["codenetra*"]
